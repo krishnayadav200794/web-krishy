@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard | Shree Balaji Pure Veg Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+<div class="shell" id="shell">
+  <aside class="sidebar">
+    <div class="brand">Shree Balaji <span>Admin</span></div>
+    <nav class="side-nav">
+      <button data-tab="overview" class="is-active">📊 Overview</button>
+      <button data-tab="bookings">🍽️ Table Bookings</button>
+      <button data-tab="party">🎉 Party Bookings</button>
+      <button data-tab="orders">🛵 Orders</button>
+      <button data-tab="menu">📋 Menu</button>
+      <button data-tab="settings" data-owner-only>⚙️ Settings</button>
+      <button data-tab="staff" data-owner-only>👥 Staff</button>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="role-badge" id="roleBadge">role</span>
+      <div id="userName" style="margin-bottom:10px;"></div>
+      <button id="logoutBtn" class="btn btn--ghost btn--sm btn--block">Log Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- Overview -->
+    <section class="tab-panel" id="tab-overview">
+      <div class="topbar"><h2>Overview</h2></div>
+      <div class="stat-grid" id="statGrid">
+        <div class="stat-card"><strong>—</strong><span>Today's Bookings</span></div>
+        <div class="stat-card"><strong>—</strong><span>Pending Table Requests</span></div>
+        <div class="stat-card"><strong>—</strong><span>Pending Party Enquiries</span></div>
+        <div class="stat-card"><strong>—</strong><span>Bookings This Month</span></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Quick Tips</h3></div>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.7;">
+          Approve or reject new table &amp; party requests from their tabs. Every action that needs to
+          reach a customer or the restaurant on WhatsApp gives you a one-tap link — WhatsApp automation
+          isn't wired up to auto-send yet (see project README for why), so a quick tap is currently required.
+        </p>
+      </div>
+    </section>
+
+    <!-- Table Bookings -->
+    <section class="tab-panel" id="tab-bookings" style="display:none;">
+      <div class="topbar">
+        <h2>Table Bookings</h2>
+        <div class="filters">
+          <select id="bookingStatusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="rejected">Rejected</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
+          <input type="date" id="bookingDateFilter" />
+          <button class="btn btn--ghost btn--sm" id="refreshBookings">Refresh</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Guest</th><th>Date &amp; Time</th><th>Guests</th><th>Note</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="bookingsTableBody"></tbody>
+        </table>
+        <div class="empty-state" id="bookingsEmpty" style="display:none;">No bookings match this filter.</div>
+      </div>
+    </section>
+
+    <!-- Party Bookings -->
+    <section class="tab-panel" id="tab-party" style="display:none;">
+      <div class="topbar">
+        <h2>Party Hall Enquiries</h2>
+        <div class="filters">
+          <select id="partyStatusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="rejected">Rejected</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn--ghost btn--sm" id="refreshParty">Refresh</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Guest</th><th>Date</th><th>Guests</th><th>Event</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="partyTableBody"></tbody>
+        </table>
+        <div class="empty-state" id="partyEmpty" style="display:none;">No enquiries match this filter.</div>
+      </div>
+    </section>
+
+    <!-- Orders -->
+    <section class="tab-panel" id="tab-orders" style="display:none;">
+      <div class="topbar">
+        <h2>Food Orders</h2>
+        <div class="filters">
+          <select id="orderStatusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="preparing">Preparing</option>
+            <option value="out_for_delivery">Out for Delivery</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn--ghost btn--sm" id="refreshOrders">Refresh</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Customer</th><th>Items</th><th>Total</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+        <div class="empty-state" id="ordersEmpty" style="display:none;">No orders match this filter.</div>
+      </div>
+    </section>
+
+    <!-- Menu -->
+    <section class="tab-panel" id="tab-menu" style="display:none;">
+      <div class="topbar">
+        <h2>Menu Management</h2>
+        <button class="btn btn--primary btn--sm" id="addMenuItemBtn">+ Add Item</button>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Special</th><th>Available</th><th>Actions</th></tr></thead>
+          <tbody id="menuTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Settings (owner only) -->
+    <section class="tab-panel" id="tab-settings" style="display:none;">
+      <div class="topbar"><h2>Settings</h2></div>
+      <div class="panel">
+        <div class="panel-head"><h3>Booking Slots</h3></div>
+        <form id="settingsForm">
+          <div class="field">
+            <label for="slotCapacity">Max bookings per time slot</label>
+            <input type="number" id="slotCapacity" min="1" required />
+          </div>
+          <div class="field">
+            <label for="slotInterval">Slot interval (minutes)</label>
+            <input type="number" id="slotInterval" min="5" step="5" required />
+          </div>
+          <div class="toggle-row">
+            <span>Accepting online bookings</span>
+            <input type="checkbox" id="acceptingBookings" />
+          </div>
+          <button type="submit" class="btn btn--primary btn--sm" style="margin-top:14px;">Save Settings</button>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Data Export</h3></div>
+        <p style="color:var(--muted); font-size:0.88rem; margin-bottom:14px;">Download all table bookings as a CSV file.</p>
+        <button class="btn btn--ghost btn--sm" id="exportBtn">Export Bookings (CSV)</button>
+      </div>
+    </section>
+
+    <!-- Staff (owner only) -->
+    <section class="tab-panel" id="tab-staff" style="display:none;">
+      <div class="topbar">
+        <h2>Staff Accounts</h2>
+        <button class="btn btn--primary btn--sm" id="addStaffBtn">+ Add Staff</button>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="staffTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Modal (reused for menu item form + staff form) -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login | Shree Balaji Pure Veg</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>Shree Balaji <span style="color:#c9a227">Admin</span></h1>
+    <p class="sub">Sign in to manage bookings, orders &amp; menu.</p>
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" required placeholder="you@shreebalajipureveg.com" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" required placeholder="••••••••" />
+      </div>
+      <button type="submit" class="btn btn--primary btn--block">Sign In</button>
+      <p class="error-msg" id="loginError">Invalid email or password.</p>
+    </form>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById('loginError');
+    errorEl.classList.remove('is-visible');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    try {
+      const res = await fetch(`${window.ADMIN_CONFIG.API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Login failed');
+
+      localStorage.setItem('sbpv_admin_token', json.token);
+      localStorage.setItem('sbpv_admin_user', JSON.stringify(json.user));
+      window.location.href = 'dashboard.html';
+    } catch (err) {
+      errorEl.textContent = err.message || 'Invalid email or password.';
+      errorEl.classList.add('is-visible');
+    }
+  });
+</script>
+</body>
+</html>
